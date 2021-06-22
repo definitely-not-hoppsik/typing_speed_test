@@ -1,3 +1,4 @@
+import numpy
 """
 module contains methods for calculating distance between two strings
 
@@ -35,20 +36,29 @@ def levenshtein_distance(text_1: str, text_2: str) -> int:
 
     """
 
-    length_text_1 = len(text_1)
-    length_text_2 = len(text_2)
+    text_1_length = len(text_1)
+    text_2_length = len(text_2)
 
-    distance_matrix = [[0 for i in range(length_text_1)]
-                       for j in range(length_text_2)]
+    distance_matrix = [[0 for i in range(text_2_length+1)]
+                       for j in range(text_1_length+1)]
 
-    for i in range(length_text_1):
-        distance_matrix[0][i] = i
-
-    for i in range(length_text_2):
+    for i in range(text_1_length+1):
         distance_matrix[i][0] = i
 
-    for i in range(length_text_1):
-        for j in range(length_text_2):
-            if text_1[i] == text_2[j]:
+    for j in range(text_2_length+1):
+        distance_matrix[0][j] = j
+
+    for i in range(1, text_1_length+1):
+        for j in range(1, text_2_length+1):
+            if text_1[i-1] == text_2[j-1]:
                 cost = 0
-                # TODO
+            else:
+                cost = 1
+
+            above = distance_matrix[i-1][j]+1
+            above_left = distance_matrix[i][j-1]+1
+            above_diagonal = distance_matrix[i-1][j-1] + cost
+
+            distance_matrix[i][j] = min(above, above_left, above_diagonal)
+
+    return distance_matrix[text_1_length][text_2_length]
