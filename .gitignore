@@ -1,3 +1,5 @@
 __pycache__/
 .mypy_cache/
 string_testing.py
+tests.py
+tests.pyc

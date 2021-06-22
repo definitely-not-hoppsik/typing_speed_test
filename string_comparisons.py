@@ -35,6 +35,12 @@ def levenshtein_distance(text_1: str, text_2: str) -> int:
     required to change one string into another
 
     """
+    try:
+        isinstance(text_1, str)
+        isinstance(text_2, str)
+    except:
+        # TODO
+        pass
 
     text_1_length = len(text_1)
     text_2_length = len(text_2)
