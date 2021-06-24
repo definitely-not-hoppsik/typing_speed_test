@@ -1,4 +1,3 @@
-import numpy
 """
 module contains methods for calculating distance between two strings
 
@@ -35,12 +34,8 @@ def levenshtein_distance(text_1: str, text_2: str) -> int:
     required to change one string into another
 
     """
-    try:
-        isinstance(text_1, str)
-        isinstance(text_2, str)
-    except:
-        # TODO
-        pass
+    if not isinstance(text_1, str) and not isinstance(text_2, str):
+        raise TypeError("both variables have to be strings")
 
     text_1_length = len(text_1)
     text_2_length = len(text_2)
@@ -66,5 +61,46 @@ def levenshtein_distance(text_1: str, text_2: str) -> int:
             above_diagonal = distance_matrix[i-1][j-1] + cost
 
             distance_matrix[i][j] = min(above, above_left, above_diagonal)
+
+    return distance_matrix[text_1_length][text_2_length]
+
+
+def damerau_levenshtein_distance(text_1: str, text_2: str) -> int:
+    """
+    definition: minimum number of single character operations (insertions, deletions,
+    substitutions, transpositions) required to change one string into another
+
+    """
+    if not isinstance(text_1, str) and not isinstance(text_2, str):
+        raise TypeError("both variables have to be strings")
+
+    text_1_length = len(text_1)
+    text_2_length = len(text_2)
+
+    distance_matrix = [[0 for i in range(text_2_length+1)]
+                       for j in range(text_1_length+1)]
+
+    for i in range(text_1_length+1):
+        distance_matrix[i][0] = i
+
+    for j in range(text_2_length+1):
+        distance_matrix[0][j] = j
+
+    for i in range(1, text_1_length+1):
+        for j in range(1, text_2_length+1):
+            if text_1[i-1] == text_2[j-1]:
+                cost = 0
+            else:
+                cost = 1
+
+            above = distance_matrix[i-1][j]+1
+            above_left = distance_matrix[i][j-1]+1
+            above_diagonal = distance_matrix[i-1][j-1] + cost
+
+            distance_matrix[i][j] = min(above, above_left, above_diagonal)
+
+            if i > 1 and j > 1 and text_1[i-1] == text_2[j-2] and text_1[i-2] == text_2[j-1]:
+                distance_matrix[i][j] = min(
+                    distance_matrix[i][j], distance_matrix[i-2][j-2]+1)
 
     return distance_matrix[text_1_length][text_2_length]
